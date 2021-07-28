@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Plain HTML Components - include test page</title>
+    <script src="js/ph.js"></script>
+</head>
+
+<body>
+    <ph-include src="included.html"></ph-include>
+
+    <ph-components>
+        <template name="x-activity">
+            <style>
+                :host {
+                    display: none;
+                }
+
+                :host-context(.active) {
+                    display: block;
+                }
+
+                #animation {
+                    height: 1.5em;
+                    width: 1.5em;
+                }
+
+                #animation span {
+                    display: none;
+
+                    font-family: monospace;
+
+                }
+
+                #animation span.on {
+                    display: inline-block;
+                }
+            </style>
+            <div id="animation">
+                <span class="on">▁</span>
+                <span>▂</span>
+                <span>▃</span>
+                <span>▄▄</span>
+                <span>▅</span>
+                <span>▆</span>
+                <span>▇</span>
+                <span>██</span>
+                <span>▇</span>
+                <span>▆</span>
+                <span>▅</span>
+                <span>▄▄</span>
+                <span>▃</span>
+                <span>▁</span>
+            </div>
+            <slot></slot>
+            <script>
+                class XActivity extends PhElement {
+                    static mappedAttributes = {
+                        'animating': 'animating',
+                        'speed': 'speed'
+                    };
+
+                    constructor() {
+                        super();
+
+                        this._animating = false;
+                        this._speed = 80;
+                    }
+
+                    set animating(newAnimating) {
+                        if (this._animating == newAnimating) {
+                            return;
+                        }
+
+                        this._animating = newAnimating;
+                        if (this._animating) {
+                            setTimeout(() => {
+                                this._tick()
+                            }, this._speed);
+                        }
+                    }
+
+                    get animating() {
+                        return this._animating;
+                    }
+
+                    set speed(newSpeed) {
+                        this._speed = newSpeed;
+                    }
+
+                    get speed() {
+                        return this._speed;
+                    }
+
+                    _tick() {
+                        var current = this.sq('#animation .on');
+                        current.classList.remove('on');
+
+                        current = current.nextElementSibling;
+
+                        (current || this.sq('#animation span')).classList.add('on');
+
+                        if (this._animating) {
+                            setTimeout(() => {
+                                this._tick()
+                            }, this._speed);
+                        }
+                    }
+                }
+            </script>
+        </template>
+
+        <template name="x-email">
+            <style>
+                :host {
+                    display: inline-block;
+                }
+            </style>
+            <a href="mailto:">
+                <slot></slot>
+            </a>
+            <script>
+                class XEmail extends PhElement {
+                    constructor() {
+                        super();
+
+                        this._updateLink();
+                    }
+
+                    connectedCallback() {
+                        this._updateLink();
+                    }
+
+                    _updateLink() {
+                        var a = this.sq('a');
+                        a.href = 'mailto:' + this.innerText;
+                    }
+                }
+            </script>
+        </template>
+
+        <template name="x-tel">
+            <style>
+                :host {
+                    display: inline-block;
+                }
+            </style>
+            <a href="tel:">
+                <slot></slot>
+            </a>
+            <script>
+                class XTel extends PhElement {
+                    constructor() {
+                        super();
+
+                        this._updateLink();
+                    }
+
+                    connectedCallback() {
+                        this._updateLink();
+                    }
+
+                    _updateLink() {
+                        var a = this.sq('a');
+                        a.href = 'tel:' + this.innerText;
+                    }
+                }
+            </script>
+        </template>
+    </ph-components>
+
+    <h1><a href="https://github.com/smeans/ph">Plain HTML (PH)</a> Components</h1>
+
+    <p>
+        <x-email>smeans@gmail.com</x-email>
+    </p>
+    <p>
+        <x-tel>803-386-8848</x-tel>
+    </p>
+    <x-bold>Hello, bold!</x-bold>
+    <x-bold data-debug="true">Debug, bold!</x-bold>
+
+    <p><label><input type="checkbox" id="busy" />&nbsp;busy</label></p>
+    <p><label><input type="checkbox" id="animate" />&nbsp;animate</label></p>
+
+    <x-activity>working...</x-activity>
+    <x-activity class="active" speed="30" animating="true">speed 30</x-activity>
+    <x-activity class="active" speed="100" animating="true">speed 100</x-activity>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function(e) {
+            phInit();
+
+            document.querySelector('#busy').addEventListener('input', function(e) {
+                document.querySelector('x-activity').classList.toggle('active', e.target.checked);
+            });
+
+            document.querySelector('#animate').addEventListener('input', function(e) {
+                document.querySelector('x-activity').animating = e.target.checked;
+            });
+        });
+    </script>
+</body>
+
+</html>

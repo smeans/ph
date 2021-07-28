@@ -1,0 +1,38 @@
+<ph-components>
+    <template name="x-bold">
+        <style>
+            :host {
+                display: block;
+            }
+            span {
+                  font-weight: bold;
+            }
+        </style>
+        <span><slot></slot></span>
+        <script>
+            class XBold extends PhElement {
+                static mappedAttributes = {'data-debug': 'debug'};
+
+                constructor() {
+                    super();
+
+                    this._debug = false;
+                }
+
+                set debug(newDebug) {
+                    this._debug = newDebug;
+                }
+
+                get debug() {
+                    return this._debug;
+                }
+
+                connectedCallback() {
+                    if (this.debug) {
+                        console.log('bolding ' + this.innerText);
+                    }
+                }
+            }
+        </script>
+    </template>
+</ph-components>
