@@ -4,6 +4,8 @@ maintaining web components as easy as humanly possible.
 ## Installation
 1. Include `js/ph.js` in the `<head>` of your HTML page.
 2. In a `DOMContentLoaded` event handler, call the `phInit()` function.
+3. Add an event handler for the `ph-loaded` event to initialize any PH components in the DOM tree.
+> If you reference components before the `ph-loaded` event is fired, their custom element behaviours won't be available.
 ## Usage
 PH components are defined as HTML `<template>` elements that contain all styling, markup, and code needed to instantiate them:
 
