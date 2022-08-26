@@ -137,7 +137,7 @@ function phInit() {
 
         // process each template element
         root.querySelectorAll('template').forEach(function(template) {
-            let tagName = template.getAttribute('name');
+            let tagName = template.getAttribute('name') || template.getAttribute('data-name');
 
             if (!tagName) {
                 // not a PH template
