@@ -67,6 +67,18 @@ This allows the `data-debug` attribute to be used to initialize a component elem
 
 See `index.html` for samples of inline and included components along with basic component architecture patterns.
 
+### Event Binding
+Custom elements almost always need to react to JavaScript events, so to simplify event binding PH will automatically bind methods that are named after their corresponding `onxxx` event attribute names. For example:
+```
+class XActivity extends PhElement {
+    . . .
+                    onclick(e) {
+                        console.log('activity clicked', e);
+                    }
+}
+```
+The `onclick` handler will automatically be bound to the current DOM node in the element constructor.
+
 ## Reference
 ### Helper Methods
 `.sq(selector)` - Executes `.querySelector()` against the shadow root of the component.

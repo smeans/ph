@@ -93,6 +93,10 @@
                         return this._speed;
                     }
 
+                    onclick(e) {
+                        console.log('activity clicked', e);
+                    }
+
                     _tick() {
                         var current = this.sq('#animation .on');
                         current.classList.remove('on');

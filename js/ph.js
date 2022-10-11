@@ -34,6 +34,14 @@ class PhElement extends HTMLElement {
         }
 
         this.shadowRoot.innerHTML = html;
+
+        // auto-bind event handlers (onxxx methods)
+        const handlers = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
+                .filter((pn) => /^on[a-z]+/.test(pn) && typeof this[pn] === 'function');
+
+        for (const pn of handlers) {
+            this.addEventListener(pn.substring('on'.length), this[pn]);
+        }
     }
 
     connectedCallback() {
