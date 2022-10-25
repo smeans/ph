@@ -159,8 +159,6 @@ function phInit() {
                 mainScript.parentNode.removeChild(mainScript);
 
                 try {
-                    eval(mainScript.innerHTML);
-
                     var nse = document.createElement('script');
                     nse.appendChild(document.createTextNode(mainScript.innerHTML));
                     head.appendChild(nse);
