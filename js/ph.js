@@ -26,14 +26,20 @@ class PhElement extends HTMLElement {
             'mode': 'open'
         });
 
-        let contentNodeArray = this.constructor.template.content.children;
+        // !!!TBD!!! wsm -- this is super-inefficient, lot of duplication; look at refactor someday
+        var shadowHtml = '';
+        for (let ctr = this.constructor; ctr && ctr.template; ctr = Object.getPrototypeOf(ctr)) {
+            let contentNodeArray = ctr.template.content.children;
+            let html = '';
+    
+            for (var i = 0; i < contentNodeArray.length; i++) {
+                html += contentNodeArray[i].outerHTML;
+            }
 
-        var html = '';
-        for (var i = 0; i < contentNodeArray.length; i++) {
-            html += contentNodeArray[i].outerHTML;
+            shadowHtml = html + shadowHtml;
         }
 
-        this.shadowRoot.innerHTML = html;
+        this.shadowRoot.innerHTML = shadowHtml;
 
         // auto-bind event handlers (onxxx methods)
         const handlers = Object.getOwnPropertyNames(Object.getPrototypeOf(this))
