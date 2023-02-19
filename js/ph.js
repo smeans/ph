@@ -22,9 +22,7 @@ class PhElement extends HTMLElement {
     constructor() {
         super();
 
-        let root = this.attachShadow({
-            'mode': 'open'
-        });
+        let delegateFocus;
 
         // !!!TBD!!! wsm -- this is super-inefficient, lot of duplication; look at refactor someday
         var shadowHtml = '';
@@ -37,7 +35,18 @@ class PhElement extends HTMLElement {
             }
 
             shadowHtml = html + shadowHtml;
+
+            const df = ctr.template.getAttribute('data-delegatesFocus');
+
+            if (delegateFocus === undefined && df !== undefined) {
+                delegateFocus = df != 'false';
+            }
         }
+
+        let root = this.attachShadow({
+            'mode': 'open',
+            'delegatesFocus': delegateFocus !== false
+        });
 
         this.shadowRoot.innerHTML = shadowHtml;
 
