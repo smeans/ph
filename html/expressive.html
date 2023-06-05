@@ -1,0 +1,822 @@
+<script>
+    class SVGHelper {
+        static pointsToQPathD(pp) {
+            if (pp.length < 3) {
+                return '';
+            }
+
+            let d = `M ${pp[0].x} ${pp[0].y}`;
+
+            let i;
+
+            for (i = 1; i < pp.length-1; i +=2) {
+                d += ` Q ${pp[i].x} ${pp[i].y}, ${pp[i+1].x} ${pp[i+1].y}`;
+            }
+
+            if (i == pp.length-1) {
+                d += ` T ${pp[i].x} ${pp[i].y}`;
+            }
+            
+            return d;
+        }
+
+        static pointsToLPathD(pp) {
+            if (pp.length < 2) {
+                return '';
+            }
+
+            let d = `M ${pp[0].x} ${pp[0].y}`;
+
+            let i;
+
+            for (i = 1; i < pp.length-1; i++) {
+                d += ` L ${pp[i].x} ${pp[i].y}`;
+            }
+
+            return d;
+        }
+
+    }
+</script>
+
+<ph-components>
+    <template name="x-element">
+        <script>
+            class XElement extends PhElement {
+                fireEvent(name, detail) {
+                    const e = new CustomEvent(name, {
+                        bubbles: true,
+                        composed: true,
+                        detail: detail
+                    });
+
+                    this.dispatchEvent(e);
+                }
+            }
+        </script>
+    </template>
+
+    <template name="x-vscroll">
+        <style>
+            :host {
+                display: block;
+            }
+
+            t-scroller {
+                display: block;
+                height: 1em;
+
+                position: relative;
+                overflow: hidden;
+            }
+
+            ::slotted(*) {
+                position: absolute;
+            }
+        </style>
+        <t-scroller>
+            <slot></slot>
+        </t-scroller>
+        <script>
+
+            // !!!TBD!!! make this a Star Wars-style vertical scroller
+            class XVscroll extends XElement {
+            }
+        </script>
+    </template>
+
+    <template name="x-stack">
+        <style>
+            :host {
+                display: block;
+                position: relative;
+            }
+
+            :host(.grow) {
+                flex-grow: 1;
+            }
+
+            :host(.shrink) {
+                flex-shrink: 1;
+            }
+
+            ::slotted(*) {
+                position: absolute;
+            }
+        </style>
+        <slot></slot>
+        <script>
+            class XStack extends XElement {
+            }
+        </script>
+    </template>
+
+    <template name="x-scroller">
+        <style>
+            :host {
+                display: block;
+            }
+
+            :host(.grow) {
+                flex-grow: 1;
+            }
+
+            :host(.shrink) {
+                flex-shrink: 1;
+            }
+
+            t-frame {
+                display: block;
+                height: 100%;
+                width: 100%;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            t-content {
+                display: block;
+                width: 100%;
+                min-height: 100%;
+            }
+        </style>
+
+        <t-frame>
+            <t-content>
+                <slot></slot>
+            </t-content>
+        </t-frame>
+
+        <script>
+            class XScroller extends XElement {
+            }
+        </script>
+    </template>
+
+    <template name="x-hbox">
+<style>
+:host {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+:host(.top) {
+    align-items: flex-start;
+}
+
+:host(.middle) {
+    align-items: center;
+}
+
+:host(.bottom) {
+    align-items: flex-end;
+}
+
+:host(.stretch) {
+    align-items: stretch;
+}
+
+:host(.left) {
+    justify-content: flex-start;
+}
+
+:host(.center) {
+    justify-content: center;
+}
+
+:host(.right) {
+    justify-content: flex-end;
+}
+
+:host(.space-around) {
+    justify-content: space-around;
+}
+
+:host(.space-between) {
+    justify-content: space-between;
+}
+
+:host(.space-evenly) {
+    justify-content: space-evenly;
+}
+
+:host(.grow) {
+                flex-grow: 1;
+            }
+
+:host(.shrink) {
+    flex-shrink: 1;
+}
+</style>
+        <slot></slot>
+        <script>
+            class XHbox extends XElement {
+
+            }
+        </script>
+    </template>
+
+    <template name="x-vbox">
+        <style>
+            :host {
+                display: flex;
+                flex-direction: column;
+            }
+
+            :host(.top) {
+                justify-content: flex-start;
+            }
+
+            :host(.middle) {
+                justify-content: center;
+            }
+
+            :host(.bottom) {
+                justify-content: flex-end;
+            }
+
+            :host(.stretch) {
+                align-items: stretch;
+            }
+
+            :host(.left) {
+                align-items: flex-start;
+            }
+
+            :host(.center) {
+                align-items: center;
+            }
+
+            :host(.right) {
+                align-items: flex-end;
+            }
+
+            :host(.grow) {
+                flex-grow: 1;
+            }
+
+            :host(.shrink) {
+                flex-shrink: 1;
+            }
+        </style>
+        <slot></slot>
+        <script>
+            class XVbox extends XElement {
+
+            }
+        </script>
+    </template>
+
+    <template name="x-spacer">
+        <style>
+            :host {
+                display: inline-block;
+                flex-grow: 1;
+            }
+        </style>
+        <slot></slot>
+        <script>
+            class XSpacer extends XElement {
+                
+            }
+        </script>
+    </template>
+
+    <template name="x-led">
+        <style>
+            :host {
+                display: inline-block;
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+
+            t-led {
+                display: block;
+                width: 100%;
+                height: 100%;
+                filter: grayscale(100%);
+                border-radius: 50%;
+            }
+
+            :host(.active) t-led {
+                filter: grayscale(0%);
+            }
+        </style>
+<svg width="100%" height="100%" viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <circle cx="66" cy="66" r="50" style="fill:url(#_Linear1);"/>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(65,74,-74,65,35,28)"><stop offset="0" style="stop-color:rgb(255,0,0);stop-opacity:0.92"/><stop offset="1" style="stop-color:rgb(255,192,191);stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>
+
+        <script>
+            class XLed extends XElement {
+
+            }
+        </script>
+    </template>
+
+    <template name="x-date">
+        <style>
+            :host {
+                display: inline-block;
+                white-space: nowrap;
+            }
+            slot {
+                display: none;
+            }
+        </style>
+        <slot></slot>
+        <div id="output"></div>
+        <script>
+            class XDate extends XElement {
+                static mappedAttributes = {"data-datestyle": "dateStyle"};
+
+                constructor() {
+                    super();
+                    this.refresh();
+                }
+
+                connectedCallback() {
+                    let observer = new MutationObserver((mutations) => {
+                        this.refresh();
+                    });
+
+                    observer.observe(this, {childList: true});
+                }
+
+                get date() {
+                    return this._date || new Date(this.textContent);
+                }
+
+                set date(newDate) {
+                    this._date = newDate;
+
+                    this.refresh();
+                }
+
+                get dateStyle() {
+                    return this._dateStyle || 'long';
+                }
+
+                set dateStyle(newDateStyle) {
+                    this._dateStyle = newDateStyle;
+                    this.refresh();
+                }
+
+                refresh() {
+                    this.g.output.innerText = this.date.toLocaleDateString(undefined, {
+                        "dateStyle": this.dateStyle
+                    });
+                }
+            }
+        </script>
+    </template>
+
+    <template name="x-pct-meter">
+        <style>
+            :host {
+                display: block;
+            }
+            
+            #meter {
+                padding-left: .25rem;
+            }
+
+            :host(.invalid) {
+                filter: grayscale(100%);
+            }
+        </style>
+
+        <x-hbox id="frame">
+            <slot></slot>
+            <svg id="meter" viewBox="0 0 100 6" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <rect id="meterBar" x="0" y="0" width="0" height="6"/>
+            </svg>
+        </x-hbox>
+
+        <script>
+            class XPctMeter extends XElement {
+                connectedCallback() {
+                    this._syncUI();
+                }
+
+                get invalid() {
+                    return this.classList.contains('invalid');
+                }
+
+                set invalid(newInvalid) {
+                    this.classList.toggle('invalid', newInvalid);
+                }
+
+                get value() {
+                    return parseFloat(this.g.meterBar.style.width);
+                }
+
+                set value(newValue) {
+                    this.g.meterBar.style.width = newValue;
+
+                    this._syncUI();
+                }
+
+                _syncUI() {
+                    if (this.invalid) {
+                        this.setAttribute('title', `(invalid)`);
+                    } else {
+                        this.setAttribute('title', `${this.value}%`);
+                    }
+
+                    const el = this.firstElementChild;
+                    if (!el) {
+                        return;
+                    }
+
+                    const cs = getComputedStyle(el);
+                    this.g.meterBar.style.fill == cs.getPropertyValue('fill');
+                }
+            }
+        </script>
+    </template>
+
+    <template name="x-icon-map">
+        <style>
+            :host {
+                display: none;
+            }
+        </style>
+
+        <slot></slot>
+        
+        <script>
+            class XIconMap extends XElement {
+                static maps = [];
+                static drawIcon(name, size, ctx, x, y, dx, dy) {
+                    size = size.toString();
+
+                    for (let i = 0; i < this.maps.length; i++) {
+                        const map = this.maps[i];
+
+                        const img = map._images[size];
+                        if (!img) {
+                            continue;
+                        }
+
+                        const frame = map._data[name] && map._data[name][size];
+                        if (!frame) {
+                            continue;
+                        }
+
+                        ctx.drawImage(img, frame.x, frame.y, frame.w, frame.h, x, y,
+                                dx ?? frame.w, dy ?? frame.h);
+                        return;
+                    }
+                }
+
+                constructor() {
+                    super();
+
+                    XIconMap.maps.push(this);
+
+                    this._images = {};
+                    this._refreshData();
+                }
+
+                async _refreshData() {
+                    const ii = {};
+
+                    Array.from(this.querySelectorAll('img')).forEach(async (img) => {
+                        const resp = await fetch(img.src + '.json');
+                        const data = await resp.json();
+                        const sz = img.getAttribute('data-size');
+                        this._images[sz] = img;
+
+                        for (const k in data.frames) {
+                            if (k in ii) {
+                                ii[k][sz] = data.frames[k].frame;
+                            } else {
+                                ii[k] = {[sz]: data.frames[k].frame}
+                            }
+                        }
+                    });
+
+                    this._data = ii;
+                }
+            }
+        </script>
+    </template>
+
+    <template name="x-svg">
+        <style>
+          :host {
+              display: inline-block;
+          }
+          ::slotted(div), ::slotted(svg) {
+              display: inline-block;
+              width: 100%;
+              height: -moz-available;
+              height: -webkit-fill-available;
+              height: fill-available;
+          }
+
+          #svgMissing {
+            display: none;
+          }
+
+          #svgMissing.active {
+            display: inline-block;
+          }
+        </style>
+        <slot><svg id="svgMissing" viewBox="0 0 1080 1080" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+            <path d="M403.481,676.519L403.481,975.5L104.5,975.5L104.5,676.519L403.481,676.519ZM975.5,975.5L676.519,975.5L676.519,676.519L975.5,676.519L975.5,975.5ZM676.519,403.481L676.519,104.5L975.5,104.5L975.5,403.481L676.519,403.481ZM403.481,403.481L104.5,403.481L104.5,104.5L403.481,104.5L403.481,403.481Z" style="fill-opacity:0.29;"/>
+        </svg></slot>
+        <script>
+          class XSvg extends XElement {
+            static mappedAttributes = {"src":"src"};
+            static svgCache = {};
+  
+            constructor() {
+              super();
+  
+              var src = this.getAttribute('src');
+              if (src) {
+                this.loadSvg(src);
+              }
+            }
+  
+            get src() {
+                return this._src;
+            }
+  
+            set src(newSrc) {
+                this._src = newSrc;
+  
+                if (this.src) {
+                    this.loadSvg(this.src)
+                }
+            }
+  
+            get baseName() {
+              var src = this.getAttribute('src');
+  
+              if (!src) {
+                return null;
+              }
+  
+              var pa = src.split('/');
+  
+              if (pa.length > 0) {
+                return pa[pa.length-1].split('.')[0];
+              }
+  
+              return null;
+            }
+  
+            set svg(newSvg) {
+              var sd = this;
+  
+              sd.innerHTML = '';
+              if (newSvg) {
+                    sd.appendChild(newSvg.cloneNode(true));
+
+                    this.fireEvent('load');
+              }
+            }
+  
+            get svg() {
+              return this.sq('svg');
+            }
+  
+            async loadSvg(src) {
+              var _this = this;
+              var sd = this;
+  
+              if (src in XSvg.svgCache) {
+                var o = XSvg.svgCache[src];
+  
+                if (Array.isArray(o)) {
+                  o.push(_this);
+                } else {
+                  _this.svg = o;
+                }
+  
+                return;
+              }
+  
+              XSvg.svgCache[src] = [_this];
+  
+              const headers = new Headers();
+              headers.append('X-AllowCache', 'yes');
+  
+              fetch(src, {
+                  method: 'GET',
+                  headers: headers
+              }).then(async (res) => {
+                        var td = document.createElement('div');
+  
+                        td.innerHTML = await res.text();
+  
+                        var svg = td.querySelector('svg');
+
+                        this.g.svgMissing.classList.toggle('active', !svg);
+
+                        if (!svg) {
+                            return;
+                        }
+  
+                        if (!svg.hasAttribute('viewBox') && (svg.hasAttribute('width')
+                            && svg.hasAttribute('height'))) {
+                          var w = svg.getAttribute('width');
+                          var h = svg.getAttribute('height');
+                          svg.setAttribute('viewBox', "0 0 " + parseInt(w) + ' '
+                              + parseInt(h));
+                          svg.removeAttribute('height');
+                          svg.removeAttribute('width');
+                        }
+  
+                        var pel = XSvg.svgCache[src];
+  
+                        pel.forEach((el) => {
+                          el.svg = svg;
+                        });
+  
+                        XSvg.svgCache[src] = svg;
+                    });
+                }
+          }
+        </script>
+      </template>
+
+      <template name="x-button">
+        <style>
+            :host {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                height: 2.5rem;
+
+                opacity: .65;
+                position: relative;
+            }
+
+            :host(:hover) {
+                opacity: 1.0;
+            }
+
+            :host(.disabled) {
+                pointer-events: none;
+                filter: grayscale(100%);
+            }
+
+            :host(:active), :host(:focus) {
+                opacity: 1.0;
+            }
+
+            :host(.round) {
+                width: 2.5rem;
+                border-radius: 50%;
+            }
+
+            :host(.round.xs) {
+                height: 1rem;
+                width: 1rem;                
+            }
+
+            :host(.round.xs) ::slotted(*) {
+                transform: scale(50%);
+            }
+
+            :host(.round.s) {
+                height: 1.75rem;
+                width: 1.75rem;                
+            }
+
+            :host(.round.s) ::slotted(*) {
+                transform: scale(75%);
+            }
+
+            :host(.round.l) {
+                height: 3.75rem;
+                width: 3.75rem;                
+            }
+
+            :host(.round.l) ::slotted(*) {
+                transform: scale(125%);
+            }
+
+            :host(.round.xl) {
+                height: 4rem;
+                width: 4rem;                
+            }
+
+            :host(.round.xl) ::slotted(*) {
+                transform: scale(150%);
+            }
+
+            #proxyButton {
+                top: 0;
+                left: 0;
+                position: absolute;
+                height: 0;
+                width: 0;
+                opacity: 0;
+            }
+        </style>
+        <button type="button" id="proxyButton"></button>
+        <slot></slot>
+        <script>
+            class XButton extends XElement {
+                static mappedAttributes = {"disabled": "disabled"};
+
+                constructor() {
+                    super();
+
+                    this.addEventListener('click', (e) => {
+                        if (this.classList.contains('toggle')) {
+                            this.classList.toggle('toggled');
+                        }
+                    })
+                }
+
+                get disabled() {
+                    return this.g.proxyButton.disabled;
+                }
+
+                set disabled(newDisabled) {
+                    this.g.proxyButton.disabled = newDisabled;
+                    this.classList.toggle('disabled', newDisabled);
+                }
+
+            }
+        </script>
+    </template>
+
+    <template name="x-code-input">
+        <style>
+            :host {
+                display: block;
+                overflow: hidden;
+            }
+
+            #frame {
+                position: relative;
+            }
+
+            #frame>* {
+                position: absolute;
+
+                left: 0;
+                right: 0;
+                margin: 0 auto;
+            }
+
+            #mask {
+                pointer-events: none;
+                background: none;
+            }
+
+            ::slotted(input), #mask {
+                padding: 0;
+                margin: 0;
+                height: 100%;
+                font-family: monospace;
+                border: none;
+                background: none;
+            }
+
+            ::slotted(input:focus), input:focus {
+                border: none;
+                outline: none;
+                outline-width: 0;
+            }   
+
+            ::slotted(input), #mask {
+                font-size: 8vw;
+                letter-spacing: .7em;
+                padding-left: .3em;
+            }
+
+            ::slotted(input) {
+                caret-color: #0000;
+                color: #000;
+            }
+
+            #mask {
+                color: var(--pc-contrast);
+                opacity: .2;
+            }
+        </style>
+        <div id="frame">
+            <div id="mask"></div>
+            <slot id="slot"></slot>
+        </div>
+        <script>
+            class XCodeInput extends XElement {
+                connectedCallback() {
+                    const ci = this.querySelector('input');
+                    this.g.mask.innerText = '█'.repeat(ci.maxLength);
+                }
+            }
+        </script>
+    </template>      
+</ph-components>
