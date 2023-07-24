@@ -160,6 +160,11 @@
     align-items: center;
 }
 
+:host(.wrap),
+:host(.flex-wrap) {
+    flex-wrap: wrap;
+}
+
 :host(.top) {
     align-items: flex-start;
 }
@@ -221,6 +226,11 @@
             :host {
                 display: flex;
                 flex-direction: column;
+            }
+
+            :host(.wrap),
+            :host(.flex-wrap) {
+                flex-wrap: wrap;
             }
 
             :host(.top) {
