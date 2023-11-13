@@ -189,7 +189,7 @@ function phInit() {
                 appendScript('class ' + className + ' extends PhElement {}');
                 customClass = classFromClassName(className);
 
-                console.warn('element ' + tagName + ': no class custom class defined (missing <script> tag in template?)');
+                console.debug('element ' + tagName + ': no class custom class defined (missing <script> tag in template?)');
             }
 
             customClass.tagName = tagName;
